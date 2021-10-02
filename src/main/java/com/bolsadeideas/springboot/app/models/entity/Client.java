@@ -1,4 +1,4 @@
-package com.bolsadeideas.springboot.app.models.entities;
+package com.bolsadeideas.springboot.app.models.entity;
 
 import java.io.Serializable;
 import java.util.Date;
