@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.bolsadeideas.springboot.app.models.dao.IClientDAO;
+import com.bolsadeideas.springboot.app.models.entity.Client;
 
 @Controller
 public class ClientController {
@@ -20,6 +22,25 @@ public class ClientController {
 		model.addAttribute("clients", this.clientDAO.findAll());
 
 		return "list";
+	}
+
+	@GetMapping("/form")
+	public String create(Model model) {
+
+		Client client = new Client();
+
+		model.addAttribute("client", client);
+		model.addAttribute("title", "Formulario de cliente");
+
+		return "form";
+	}
+
+	@PostMapping("/form")
+	public String save(Client client) {
+
+		this.clientDAO.save(client);
+
+		return "redirect:list";
 	}
 
 }

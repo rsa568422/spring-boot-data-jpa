@@ -24,4 +24,10 @@ public class ClientDAO implements IClientDAO {
 		return this.em.createQuery("from Client").getResultList();
 	}
 
+	@Override
+	@Transactional
+	public void save(Client client) {
+		this.em.persist(client);
+	}
+
 }
