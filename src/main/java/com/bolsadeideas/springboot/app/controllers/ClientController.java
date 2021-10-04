@@ -13,21 +13,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import com.bolsadeideas.springboot.app.models.dao.IClientDAO;
 import com.bolsadeideas.springboot.app.models.entity.Client;
+import com.bolsadeideas.springboot.app.models.service.IClientService;
 
 @Controller
 @SessionAttributes("client")
 public class ClientController {
 
 	@Autowired
-	private IClientDAO clientDAO;
+	private IClientService clientService;
 
 	@GetMapping("/list")
 	public String list(Model model) {
 
 		model.addAttribute("title", "Listado de clientes");
-		model.addAttribute("clients", this.clientDAO.findAll());
+		model.addAttribute("clients", this.clientService.findAll());
 
 		return "list";
 	}
@@ -49,7 +49,7 @@ public class ClientController {
 		Client client = null;
 
 		if (id != null && !id.equals(0L)) {
-			client = this.clientDAO.findById(id);
+			client = this.clientService.findById(id);
 		} else {
 			return "redirect:/list";
 		}
@@ -69,19 +69,19 @@ public class ClientController {
 			return "form";
 		}
 
-		this.clientDAO.save(client);
+		this.clientService.save(client);
 		status.setComplete();
 
 		return "redirect:/list";
 	}
-	
+
 	@RequestMapping(value = "/delete/{id}")
 	public String delete(@PathVariable(value = "id") Long id) {
-		
+
 		if (id != null && !id.equals(0L)) {
-			this.clientDAO.delete(id);
+			this.clientService.delete(id);
 		}
-		
+
 		return "redirect:/list";
 	}
 
