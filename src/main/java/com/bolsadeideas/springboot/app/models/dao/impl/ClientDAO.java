@@ -25,9 +25,19 @@ public class ClientDAO implements IClientDAO {
 	}
 
 	@Override
+	public Client findById(Long id) {
+		return this.em.find(Client.class, id);
+	}
+
+	@Override
 	@Transactional
 	public void save(Client client) {
-		this.em.persist(client);
+
+		if (client.getId() != null && client.getId() > 0L) {
+			this.em.merge(client); // merge -> actualiza
+		} else {
+			this.em.persist(client); // persist -> crea
+		}
 	}
 
 }

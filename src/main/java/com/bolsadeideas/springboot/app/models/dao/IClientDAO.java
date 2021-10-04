@@ -7,7 +7,9 @@ import com.bolsadeideas.springboot.app.models.entity.Client;
 public interface IClientDAO {
 
 	public List<Client> findAll();
-	
+
+	public Client findById(Long id);
+
 	public void save(Client client);
 
 }
