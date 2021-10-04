@@ -1,2 +1,3 @@
-INSERT INTO clients (id, name, surname, email, create_at) VALUES (1, 'Andrés', 'Guzmán', 'andres@email.com', '2021-01-01');
-INSERT INTO clients (id, name, surname, email, create_at) VALUES (2, 'Roberto', 'Sánchez', 'roberto@email.com', '2021-01-02');
+/* Populate tables */
+INSERT INTO clientes (id, nombre, apellido, email, create_at) VALUES(1, 'Andres', 'Guzman', 'profesor@bolsadeideas.com', '2017-08-28');
+INSERT INTO clientes (id, nombre, apellido, email, create_at) VALUES(2, 'John', 'Doe', 'john.doe@gmail.com', '2017-08-28');

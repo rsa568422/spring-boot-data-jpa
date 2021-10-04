@@ -2,11 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8" />
-<title th:text="${title}"></title>
+<title th:text="${titulo}">Insert title here</title>
 <link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-	crossorigin="anonymous">
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
 
@@ -19,75 +17,65 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav">
-				<li class="nav-item active"><a class="nav-link" href="#">Home
-						<span class="sr-only">(current)</span>
-				</a></li>
-				<li class="nav-item"><a class="nav-link" th:href="@{/list}">Clientes</a>
-				</li>
+				<li class="nav-item active"><a class="nav-link" href="#">Home</a></li>
+				<li class="nav-item"><a class="nav-link" th:href="@{/listar}">Clientes</a></li>
 			</ul>
 		</div>
 	</nav>
 
 	<div class="container">
-		<h1 th:text="${title}"
+		<h1 th:text="${titulo}"
 			class="text-secondary border border-success border-top-0 border-left-0 border-right-0"></h1>
 
-		<div th:object="${client}" th:remove="tag">
+		<div th:object="${cliente}" th:remove="tag">
 			<ul th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
-				<li th:each="error: ${#fields.errors('*')}" th:text="${error}"></li>
+				<li th:each="err: ${#fields.errors('*')}" th:text="${err}"></li>
 			</ul>
 		</div>
-
-		<form th:action="@{/form}" th:object="${client}" method="post">
-
+		<form th:action="@{/form}" th:object="${cliente}" method="post">
 			<div class="form-group row">
-				<label class="col-form-label col-sm-2">Nombre</label>
+				<label class="col-sm-2 col-form-label">Nombre</label>
 				<div class="col-sm-6">
-					<input type="text" th:field="*{name}" class="form-control"
+					<input type="text" th:field="*{nombre}" class="form-control"
 						th:errorclass="'form-control alert-danger'" /> <small
-						th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
-						class="form-text text-danger"></small>
+						class="form-text text-danger"
+						th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
 				</div>
 			</div>
-
 			<div class="form-group row">
-				<label class="col-form-label col-sm-2">Apellido </label>
+				<label class="col-sm-2 col-form-label">Apellido</label>
 				<div class="col-sm-6">
-					<input type="text" th:field="*{surname}" class="form-control"
+					<input type="text" th:field="*{apellido}" class="form-control"
 						th:errorclass="'form-control alert-danger'" /> <small
-						th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"
-						class="form-text text-danger"></small>
+						class="form-text text-danger"
+						th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></small>
 				</div>
 			</div>
-
 			<div class="form-group row">
-				<label class="col-form-label col-sm-2">Email </label>
+				<label class="col-sm-2 col-form-label">Email</label>
 				<div class="col-sm-6">
 					<input type="text" th:field="*{email}" class="form-control"
 						th:errorclass="'form-control alert-danger'" /> <small
-						th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
-						class="form-text text-danger"></small>
+						class="form-text text-danger"
+						th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
 				</div>
 			</div>
-
 			<div class="form-group row">
-				<label class="col-form-label col-sm-2">Fecha</label>
+				<label class="col-sm-2 col-form-label">Fecha</label>
 				<div class="col-sm-6">
-					<input type="text" th:field="*{createAt}" class="form-control"
+					<input type="text" class="form-control" th:field="*{createAt}"
 						th:errorclass="'form-control alert-danger'" /> <small
-						th:if="${#fields.hasErrors('createAt')}" th:errors="*{createAt}"
-						class="form-text text-danger"></small>
+						class="form-text text-danger"
+						th:if="${#fields.hasErrors('createAt')}" th:errors="*{createAt}"></small>
 				</div>
 			</div>
-
 			<div class="form-group row">
 				<div class="col-sm-6">
-					<input type="submit" value="Crear cliente" class="btn btn-primary" />
+					<input type="submit" value="Crear Cliente" class="btn btn-primary" />
 				</div>
 			</div>
 
 		</form>
 	</div>
-
 </body>
 </html>
