@@ -31,7 +31,7 @@ public class ClientController {
 	@GetMapping("/list")
 	public String list(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
 
-		Pageable pageRequest = PageRequest.of(page, 4);
+		Pageable pageRequest = PageRequest.of(page, 5);
 		Page<Client> clients = this.clientService.findAll(pageRequest);
 		
 		model.addAttribute("title", "Listado de clientes");
