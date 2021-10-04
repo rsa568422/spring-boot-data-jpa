@@ -18,13 +18,14 @@ public class ClientDAO implements IClientDAO {
 	private EntityManager em;
 
 	@Override
-	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
+	@SuppressWarnings("unchecked")
 	public List<Client> findAll() {
 		return this.em.createQuery("from Client").getResultList();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Client findById(Long id) {
 		return this.em.find(Client.class, id);
 	}
@@ -38,6 +39,12 @@ public class ClientDAO implements IClientDAO {
 		} else {
 			this.em.persist(client); // persist -> crea
 		}
+	}
+
+	@Override
+	@Transactional
+	public void delete(Long id) {
+		this.em.remove(this.findById(id));
 	}
 
 }
