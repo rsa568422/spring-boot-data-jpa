@@ -35,7 +35,7 @@ public class ClientController {
 		Pageable pageRequest = PageRequest.of(page, 4);
 		Page<Client> clients = this.clientService.findAll(pageRequest);
 		
-		PageRender<Client> pageRender = new PageRender<>("/list", clients);
+		PageRender<Client> pageRender = PageRender.of("/list", clients);
 		
 		model.addAttribute("title", "Listado de clientes");
 		model.addAttribute("clients", clients);
