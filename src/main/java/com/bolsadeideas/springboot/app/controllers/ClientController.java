@@ -1,5 +1,10 @@
 package com.bolsadeideas.springboot.app.controllers;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bolsadeideas.springboot.app.models.entity.Client;
@@ -34,9 +40,9 @@ public class ClientController {
 
 		Pageable pageRequest = PageRequest.of(page, 4);
 		Page<Client> clients = this.clientService.findAll(pageRequest);
-		
+
 		PageRender<Client> pageRender = PageRender.of("/list", clients);
-		
+
 		model.addAttribute("title", "Listado de clientes");
 		model.addAttribute("clients", clients);
 		model.addAttribute("page", pageRender);
@@ -80,13 +86,29 @@ public class ClientController {
 
 	@PostMapping("/form")
 	public String save(@Valid Client client, BindingResult result, Model model,
-						RedirectAttributes flash, SessionStatus status) {
+			@RequestParam("file") MultipartFile photo, RedirectAttributes flash, SessionStatus status) {
 
 		if (result.hasErrors()) {
 			model.addAttribute("title", "Formulario de cliente");
 			return "form";
 		}
-		
+
+		if (!photo.isEmpty()) {
+			String rootPath = Paths.get("src//main//resources//static//uploads").toFile().getAbsolutePath();
+			String fileName = photo.getOriginalFilename();
+			try {
+				byte[] bytes = photo.getBytes();
+				Path path = Paths.get(String.format("%s//%s", rootPath, fileName));
+				Files.write(path, bytes);
+				
+				client.setPhoto(fileName);
+
+				flash.addFlashAttribute("info", String.format("Imagen subida correctamente: '%s'", fileName));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 		String action = client.getId() != null ? "editado" : "creado";
 
 		this.clientService.save(client);
