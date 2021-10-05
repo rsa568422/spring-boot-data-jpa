@@ -14,7 +14,7 @@
 			<div class="card-body">
 
 				<img th:if="${#strings.length(client.photo) > 0}"
-					th:src="@{'/uploads/' + client.photo}" th:alt="${client.photo}"
+					th:src="@{'/uploads/' + ${client.photo}}" th:alt="${client.photo}"
 					class="img-thumbnail rounded float-left" style="max-width: 25%" />
 
 				<ul class="list-group">
