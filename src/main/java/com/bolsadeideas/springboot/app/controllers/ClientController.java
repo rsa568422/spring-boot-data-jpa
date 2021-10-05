@@ -35,6 +35,22 @@ public class ClientController {
 	@Autowired
 	private IClientService clientService;
 
+	@GetMapping("/see/{id}")
+	public String see(@PathVariable(value = "id") Long id, Model model, RedirectAttributes flash) {
+
+		Client client = this.clientService.findById(id);
+
+		if (client == null) {
+			flash.addAttribute("error", "Cliente no encontrado");
+			return "redirect:/list";
+		}
+
+		model.addAttribute("title", "Detalles cliente: ".concat(client.getName()));
+		model.addAttribute("client", client);
+
+		return "see";
+	}
+
 	@GetMapping("/list")
 	public String list(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
 
@@ -100,7 +116,7 @@ public class ClientController {
 				byte[] bytes = photo.getBytes();
 				Path path = Paths.get(String.format("%s//%s", rootPath, fileName));
 				Files.write(path, bytes);
-				
+
 				client.setPhoto(fileName);
 
 				flash.addFlashAttribute("info", String.format("Imagen subida correctamente: '%s'", fileName));
