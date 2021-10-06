@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +37,8 @@ public class ClientController {
 
 	@Autowired
 	private IClientService clientService;
+
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@GetMapping("/see/{id}")
 	public String see(@PathVariable(value = "id") Long id, Model model, RedirectAttributes flash) {
@@ -110,12 +115,15 @@ public class ClientController {
 		}
 
 		if (!photo.isEmpty()) {
-			String rootPath = "D://DEV//temp//uploads";
-			String fileName = photo.getOriginalFilename();
+			String fileName = String.format("%s_%s", UUID.randomUUID().toString().toUpperCase(),
+					photo.getOriginalFilename().toLowerCase().trim().replace(" ", "_"));
+
+			Path rootPath = Paths.get("uploads").resolve(fileName).toAbsolutePath();
+
+			this.log.info("rootPath: ".concat(rootPath.toString()));
+
 			try {
-				byte[] bytes = photo.getBytes();
-				Path path = Paths.get(String.format("%s//%s", rootPath, fileName));
-				Files.write(path, bytes);
+				Files.copy(photo.getInputStream(), rootPath);
 
 				client.setPhoto(fileName);
 

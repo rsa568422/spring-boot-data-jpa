@@ -1,5 +1,9 @@
 package com.bolsadeideas.springboot.app;
 
+import java.nio.file.Paths;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -7,11 +11,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
 
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		WebMvcConfigurer.super.addResourceHandlers(registry);
 
-		registry.addResourceHandler("/uploads/**").addResourceLocations("file:/D:/DEV/temp/uploads/");
+		String resourcePath = Paths.get("uploads").toAbsolutePath().toUri().toString();
+
+		this.log.info(resourcePath);
+
+		registry.addResourceHandler("/uploads/**").addResourceLocations(resourcePath);
 	}
 
 }
