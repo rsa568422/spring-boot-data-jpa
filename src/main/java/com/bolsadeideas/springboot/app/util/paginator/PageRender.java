@@ -13,7 +13,7 @@ public class PageRender<T> {
 	private String url;
 
 	@Getter
-	private int pagesQuantity;
+	private int totalPages;
 
 	@Getter
 	private int actualPage;
@@ -23,35 +23,14 @@ public class PageRender<T> {
 
 	private Page<T> page;
 
-	private int elementsForPage;
+	private int size;
 
-	public PageRender(String url, Page<T> page) {
-		this.url = url;
-		this.page = page;
-		this.pages = new ArrayList<>();
+	public static <T> PageRender<T> of(String url, Page<T> page) {
+		PageRender<T> pageRender = new PageRender<>();
 
-		this.elementsForPage = page.getSize();
-		this.pagesQuantity = page.getTotalPages();
-		this.actualPage = page.getNumber() + 1;
+		pageRender.initPageRender(url, page);
 
-		int start, end;
-		if (this.pagesQuantity <= this.elementsForPage) {
-			start = 1;
-			end = this.pagesQuantity;
-		} else {
-			if (this.actualPage <= this.elementsForPage / 2) {
-				start = 1;
-			} else if (this.actualPage >= this.pagesQuantity - this.elementsForPage / 2) {
-				start = this.pagesQuantity - this.elementsForPage + 1;
-			} else {
-				start = this.actualPage - this.elementsForPage / 2;
-			}
-			end = this.elementsForPage;
-		}
-		
-		for (int i = 0; i < end; i++) {
-			this.pages.add(new PageItem(start + i, this.actualPage == start + i));
-		}
+		return pageRender;
 	}
 
 	public boolean isFirst() {
@@ -68,6 +47,35 @@ public class PageRender<T> {
 
 	public boolean hasPrevious() {
 		return this.page.hasPrevious();
+	}
+
+	private void initPageRender(String url, Page<T> page) {
+		this.url = url;
+		this.page = page;
+		this.pages = new ArrayList<>();
+		
+		this.size = page.getSize();
+		this.totalPages = page.getTotalPages();
+		this.actualPage = page.getNumber() + 1;
+
+		int start, end;
+		if (this.totalPages <= this.size) {
+			start = 1;
+			end = this.totalPages;
+		} else {
+			if (this.actualPage <= this.size / 2) {
+				start = 1;
+			} else if (this.actualPage >= this.totalPages - this.size / 2) {
+				start = this.totalPages - this.size + 1;
+			} else {
+				start = this.actualPage - this.size / 2;
+			}
+			end = this.size;
+		}
+
+		for (int i = 0; i < end; i++) {
+			this.pages.add(new PageItem(start + i, this.actualPage == start + i));
+		}
 	}
 
 }
