@@ -1,20 +1,12 @@
 package com.bolsadeideas.springboot.app.controllers;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bolsadeideas.springboot.app.models.entity.Client;
 import com.bolsadeideas.springboot.app.models.service.IClientService;
+import com.bolsadeideas.springboot.app.models.service.IUploadFileService;
 import com.bolsadeideas.springboot.app.util.paginator.PageRender;
 
 @Controller
@@ -44,24 +37,15 @@ public class ClientController {
 	@Autowired
 	private IClientService clientService;
 
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	
-	private final static String UPLOADS_FOLDER = "uploads";
+	@Autowired
+	private IUploadFileService uploadFileService;
 
 	@GetMapping("/uploads/{filename:.+}")
 	public ResponseEntity<Resource> getPhoto(@PathVariable String filename) {
-		Path photo = Paths.get(UPLOADS_FOLDER).resolve(filename).toAbsolutePath();
-
-		this.log.info("photo: ".concat(photo.toString()));
-
 		Resource resource = null;
 
 		try {
-			resource = new UrlResource(photo.toUri());
-
-			if (!resource.exists() || !resource.isReadable()) {
-				throw new RuntimeException("Error: no se puede cargar la imagen ".concat(photo.toString()));
-			}
+			resource = this.uploadFileService.load(filename);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -145,28 +129,23 @@ public class ClientController {
 			return "form";
 		}
 
+		String filename = client.getPhoto();
+
 		if (!photo.isEmpty()) {
-			if (client.getId() != null && client.getId() > 0 && client.getPhoto() != null
-					&& client.getPhoto().length() > 0) {
-				this.removePhoto(client.getId(), flash);
+			if (client.getId() != null && client.getId() > 0 && filename != null && filename.length() > 0) {
+				this.uploadFileService.delete(filename);
 			}
-
-			String fileName = String.format("%s_%s", UUID.randomUUID().toString().toUpperCase(),
-					photo.getOriginalFilename().toLowerCase().trim().replace(" ", "_"));
-
-			Path rootPath = Paths.get(UPLOADS_FOLDER).resolve(fileName).toAbsolutePath();
-
-			this.log.info("rootPath: ".concat(rootPath.toString()));
 
 			try {
-				Files.copy(photo.getInputStream(), rootPath);
-
-				client.setPhoto(fileName);
-
-				flash.addFlashAttribute("info", String.format("Imagen subida correctamente: '%s'", fileName));
+				filename = this.uploadFileService.copy(photo);
 			} catch (IOException e) {
+				filename = null;
 				e.printStackTrace();
 			}
+
+			client.setPhoto(filename);
+
+			flash.addFlashAttribute("info", String.format("Imagen subida correctamente: '%s'", filename));
 		}
 
 		String action = client.getId() != null ? "editado" : "creado";
@@ -181,8 +160,17 @@ public class ClientController {
 	@RequestMapping(value = "/delete/{id}")
 	public String delete(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
 
-		if (id != null && !id.equals(0L)) {
-			this.removePhoto(id, flash);
+		if (id > 0) {
+			Client client = this.clientService.findById(id);
+
+			if (client == null) {
+				flash.addFlashAttribute("error", "Cliente no encontrado");
+				return "redirect:/list";
+			}
+
+			if (this.uploadFileService.delete(client.getPhoto())) {
+				flash.addFlashAttribute("info", String.format("Foto '%s' eliminada con éxito", client.getPhoto()));
+			}
 
 			this.clientService.delete(id);
 
@@ -190,20 +178,6 @@ public class ClientController {
 		}
 
 		return "redirect:/list";
-	}
-
-	private void removePhoto(Long id, RedirectAttributes flash) {
-		Client client = this.clientService.findById(id);
-
-		if (client != null && client.getPhoto() != null && client.getPhoto().length() > 0) {
-			String filename = client.getPhoto();
-			Path rootPath = Paths.get(UPLOADS_FOLDER).resolve(client.getPhoto()).toAbsolutePath();
-			File photo = rootPath.toFile();
-
-			if (photo.exists() && photo.canRead() && photo.delete()) {
-				flash.addFlashAttribute("info", String.format("Foto '%s' eliminada con éxito", filename));
-			}
-		}
 	}
 
 }
