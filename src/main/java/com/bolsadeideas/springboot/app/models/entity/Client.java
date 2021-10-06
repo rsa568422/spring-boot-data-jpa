@@ -55,7 +55,7 @@ public class Client implements Serializable {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createAt;
 
-	@OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Receipt> receipts;
 
 	private String photo;
