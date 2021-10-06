@@ -1,6 +1,7 @@
 package com.bolsadeideas.springboot.app.controllers;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,9 +12,13 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,6 +44,29 @@ public class ClientController {
 	private IClientService clientService;
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+	@GetMapping("/uploads/{filename:.+}")
+	public ResponseEntity<Resource> getPhoto(@PathVariable String filename) {
+		Path photo = Paths.get("uploads").resolve(filename).toAbsolutePath();
+
+		this.log.info("photo: ".concat(photo.toString()));
+
+		Resource resource = null;
+
+		try {
+			resource = new UrlResource(photo.toUri());
+
+			if (!resource.exists() || !resource.isReadable()) {
+				throw new RuntimeException("Error: no se puede cargar la imagen ".concat(photo.toString()));
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
+	}
 
 	@GetMapping("/see/{id}")
 	public String see(@PathVariable(value = "id") Long id, Model model, RedirectAttributes flash) {
