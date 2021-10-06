@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bolsadeideas.springboot.app.models.service.IUploadFileService;
@@ -23,6 +24,12 @@ public class UploadFileService implements IUploadFileService {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private final static String UPLOADS_FOLDER = "uploads";
+
+	@Override
+	public void init() throws IOException {
+		this.deleteAll();
+		Files.createDirectory(Paths.get(UPLOADS_FOLDER));
+	}
 
 	@Override
 	public Resource load(String filename) throws MalformedURLException {
@@ -59,6 +66,11 @@ public class UploadFileService implements IUploadFileService {
 		File file = this.getPath(filename).toFile();
 
 		return file.exists() && file.canRead() && file.delete();
+	}
+
+	@Override
+	public void deleteAll() {
+		FileSystemUtils.deleteRecursively(Paths.get(UPLOADS_FOLDER).toFile());
 	}
 
 	private Path getPath(String filename) {
