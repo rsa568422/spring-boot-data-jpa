@@ -54,18 +54,18 @@ public class Client implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createAt;
-	
+
 	@OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Receipt> receipts;
-	
+
 	private String photo;
-	
+
 	public Client() {
 		this.receipts = new ArrayList<>();
 	}
-	
+
 	public void addReceipt(Receipt receipt) {
-		this.receipts.add(receipt);		
+		this.receipts.add(receipt);
 	}
 
 }

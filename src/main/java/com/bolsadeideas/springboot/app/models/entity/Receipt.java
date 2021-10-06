@@ -47,11 +47,11 @@ public class Receipt implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Client client;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "receipt_id")
 	private List<ReceiptLine> lines;
-	
+
 	public Receipt() {
 		this.lines = new ArrayList<>();
 	}
@@ -60,9 +60,13 @@ public class Receipt implements Serializable {
 	public void prePersist() {
 		this.createAt = new Date();
 	}
-	
+
 	public void addLine(ReceiptLine line) {
 		this.lines.add(line);
+	}
+
+	public Double getTotal() {
+		return this.lines.stream().map(ReceiptLine::getAmount).reduce(Double::sum).orElse(null);
 	}
 
 }
