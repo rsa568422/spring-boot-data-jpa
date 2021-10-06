@@ -1,5 +1,6 @@
 package com.bolsadeideas.springboot.app.controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -44,10 +45,12 @@ public class ClientController {
 	private IClientService clientService;
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
+	
+	private final static String UPLOADS_FOLDER = "uploads";
 
 	@GetMapping("/uploads/{filename:.+}")
 	public ResponseEntity<Resource> getPhoto(@PathVariable String filename) {
-		Path photo = Paths.get("uploads").resolve(filename).toAbsolutePath();
+		Path photo = Paths.get(UPLOADS_FOLDER).resolve(filename).toAbsolutePath();
 
 		this.log.info("photo: ".concat(photo.toString()));
 
@@ -143,10 +146,15 @@ public class ClientController {
 		}
 
 		if (!photo.isEmpty()) {
+			if (client.getId() != null && client.getId() > 0 && client.getPhoto() != null
+					&& client.getPhoto().length() > 0) {
+				this.removePhoto(client.getId(), flash);
+			}
+
 			String fileName = String.format("%s_%s", UUID.randomUUID().toString().toUpperCase(),
 					photo.getOriginalFilename().toLowerCase().trim().replace(" ", "_"));
 
-			Path rootPath = Paths.get("uploads").resolve(fileName).toAbsolutePath();
+			Path rootPath = Paths.get(UPLOADS_FOLDER).resolve(fileName).toAbsolutePath();
 
 			this.log.info("rootPath: ".concat(rootPath.toString()));
 
@@ -174,12 +182,28 @@ public class ClientController {
 	public String delete(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
 
 		if (id != null && !id.equals(0L)) {
+			this.removePhoto(id, flash);
+
 			this.clientService.delete(id);
 
 			flash.addFlashAttribute("success", "Cliente eliminado con éxito");
 		}
 
 		return "redirect:/list";
+	}
+
+	private void removePhoto(Long id, RedirectAttributes flash) {
+		Client client = this.clientService.findById(id);
+
+		if (client != null && client.getPhoto() != null && client.getPhoto().length() > 0) {
+			String filename = client.getPhoto();
+			Path rootPath = Paths.get(UPLOADS_FOLDER).resolve(client.getPhoto()).toAbsolutePath();
+			File photo = rootPath.toFile();
+
+			if (photo.exists() && photo.canRead() && photo.delete()) {
+				flash.addFlashAttribute("info", String.format("Foto '%s' eliminada con éxito", filename));
+			}
+		}
 	}
 
 }
