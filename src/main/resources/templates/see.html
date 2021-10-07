@@ -24,6 +24,30 @@
 					<li class="list-group-item" th:text="${client.createAt}"></li>
 				</ul>
 
+				<div class="alert alert-info my-4"
+					th:if="${#lists.isEmpty(client.receipts)}"
+					th:text="'No hay facturas asignadas a ' + ${client.name} + ' ' + ${client.surname}"></div>
+
+				<table class="table table-bordered table-striped my-4"
+					th:if="${!#lists.isEmpty(client.receipts)}">
+					<thead class="thead-dark">
+						<tr>
+							<th>Folio</th>
+							<th>Descripci&oacuten</th>
+							<th>Fecha</th>
+							<th>Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="receipt: ${client.receipts}">
+							<td th:text="${receipt.id}"></td>
+							<td th:text="${receipt.description}"></td>
+							<td th:text="${receipt.createAt}"></td>
+							<td th:text="${receipt.total}"></td>
+						</tr>
+					</tbody>
+				</table>
+
 			</div>
 
 		</div>
