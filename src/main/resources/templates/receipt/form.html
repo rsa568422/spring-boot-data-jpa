@@ -10,7 +10,10 @@
 			<div class="card-header" th:text="${title}"></div>
 			<div class="card-body">
 
-				<h4 class="card-title" th:text="${title}"></h4>
+				<h4 class="card-title">
+					<a th:href="@{'/see/' + ${receipt.client.id}}"
+						class="btn btn-light btn-xs" th:text="'&laquo; volver'"></a>
+				</h4>
 
 				<form th:action="@{/receipt/form/}" th:object="${receipt}"
 					method="post">
