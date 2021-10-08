@@ -8,7 +8,7 @@
 		$("#find_product").autocomplete({
 			source: function(request, response) {
 				$.ajax({
-					url: "receipt/load-products" + request.term,
+					url: "/receipt/load-products/" + request.term,
 					dataType: "json",
 					data: {
 						term: request.term
@@ -21,7 +21,7 @@
 								price: item.price
 							};
 						}));
-					},
+					}
 				});
 			},
 			
