@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<script type="text/javascript" th:fragment="javascript">
+	
+	$(document).ready(function() {
+		$("#find_product").autocomplete({
+			source: function(request, response) {
+				$.ajax({
+					url: "receipt/load-products" + request.term,
+					dataType: "json",
+					data: {
+						term: request.term
+					},
+					success: function(data) {
+						response($.map(data, function(item) {
+							return {
+								value: item.id,
+								label: item.name,
+								price: item.price
+							};
+						}));
+					},
+				});
+			},
+			
+			select: function(event, ui) {
+				$("#find_product").val(ui.item.label);
+				return false;
+			}			
+		});
+	});
+		
+	</script>
+
+</body>
+</html>
