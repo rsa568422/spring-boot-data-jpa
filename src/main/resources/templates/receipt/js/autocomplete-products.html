@@ -25,7 +25,14 @@
 				},
 
 				select : function(event, ui) {
-					$("#find_product").val(ui.item.label);
+					var line = $("#templateReceiptLines").html();
+					
+					line = line.replace(/{ID}/g, ui.item.value);
+					line = line.replace(/{NAME}/g, ui.item.label);
+					line = line.replace(/{PRICE}/g, ui.item.price);
+					
+					$("#loadItemProducts tbody").append(line);
+					
 					return false;
 				}
 			});
