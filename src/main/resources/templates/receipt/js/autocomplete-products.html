@@ -26,17 +26,30 @@
 
 				select : function(event, ui) {
 					var line = $("#templateReceiptLines").html();
-					
-					line = line.replace(/{ID}/g, ui.item.value);
-					line = line.replace(/{NAME}/g, ui.item.label);
-					line = line.replace(/{PRICE}/g, ui.item.price);
-					
+
+					var id = ui.item.value;
+					var name = ui.item.label;
+					var price = ui.item.price;
+
+					line = line.replace(/{ID}/g, id);
+					line = line.replace(/{NAME}/g, name);
+					line = line.replace(/{PRICE}/g, price);
+
 					$("#loadItemProducts tbody").append(line);
-					
+
+					itemsHelper.getAmount(id, price, 1);
+
 					return false;
 				}
 			});
 		});
+
+		var itemsHelper = {
+			getAmount : function(id, price, quantity) {
+				$("#total_amount_" + id).html(
+						parseInt(price) * parseInt(quantity));
+			}
+		}
 	</script>
 
 </body>
