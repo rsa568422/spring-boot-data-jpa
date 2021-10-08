@@ -42,8 +42,8 @@ public class ReceiptController {
 
 		return "receipt/form";
 	}
-	
-	@GetMapping(value = "/load-products/{term}", produces = {"application/json"})
+
+	@GetMapping(value = "/load-products/{term}", produces = { "application/json" })
 	public @ResponseBody List<Product> loadProducts(@PathVariable String term) {
 		return this.clientService.findByName(term);
 	}

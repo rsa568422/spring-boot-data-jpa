@@ -19,7 +19,7 @@ public class ClientService implements IClientService {
 
 	@Autowired
 	private IClientDAO clientDAO;
-	
+
 	@Autowired
 	private IProductDAO productDAO;
 
