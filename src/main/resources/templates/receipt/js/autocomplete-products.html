@@ -25,11 +25,17 @@
 				},
 
 				select : function(event, ui) {
-					var line = $("#templateReceiptLines").html();
-
 					var id = ui.item.value;
 					var name = ui.item.label;
 					var price = ui.item.price;
+
+					if (itemsHelper.hasProduct(id)) {
+						itemsHelper.incrementQuantity(id, price);
+
+						return false;
+					}
+
+					var line = $("#templateReceiptLines").html();
 
 					line = line.replace(/{ID}/g, id);
 					line = line.replace(/{NAME}/g, name);
@@ -48,6 +54,25 @@
 			getAmount : function(id, price, quantity) {
 				$("#total_amount_" + id).html(
 						parseInt(price) * parseInt(quantity));
+			},
+			hasProduct : function(id) {
+				var result;
+
+				$("input[name='line_id[]']").each(function() {
+					if (parseInt(id) == parseInt($(this).val())) {
+						result = true;
+					}
+				});
+
+				return result;
+			},
+			incrementQuantity : function(id, price) {
+				var quantity = $("#quantity_" + id).val() ? parseInt($(
+						"#quantity_" + id).val()) : 0;
+
+				$("#quantity_" + id).val(++quantity);
+
+				this.getAmount(id, price, quantity);
 			}
 		}
 	</script>
