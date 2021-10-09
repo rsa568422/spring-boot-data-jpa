@@ -24,7 +24,7 @@ public class ClientService implements IClientService {
 
 	@Autowired
 	private IProductDAO productDAO;
-	
+
 	@Autowired
 	private IReceiptDAO receiptDAO;
 
@@ -68,6 +68,12 @@ public class ClientService implements IClientService {
 	@Transactional
 	public void saveReceipt(Receipt receipt) {
 		this.receiptDAO.save(receipt);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Product findProductById(Long id) {
+		return this.productDAO.findById(id).orElse(null);
 	}
 
 }

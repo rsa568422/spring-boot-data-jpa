@@ -22,7 +22,9 @@ public interface IClientService {
 	public void delete(Long id);
 
 	public List<Product> findByName(String term);
-	
+
 	public void saveReceipt(Receipt receipt);
+
+	public Product findProductById(Long id);
 
 }
