@@ -54,6 +54,7 @@
 			getAmount : function(id, price, quantity) {
 				$("#total_amount_" + id).html(
 						parseInt(price) * parseInt(quantity));
+				this.getTotalAmount();
 			},
 			hasProduct : function(id) {
 				var result;
@@ -76,6 +77,17 @@
 			},
 			deleteReceiptLine : function(id) {
 				$("#row_" + id).remove();
+
+				this.getTotalAmount();
+			},
+			getTotalAmount : function() {
+				var total = 0;
+
+				$("span[id^='total_amount_']").each(function() {
+					total += parseInt($(this).html());
+				});
+
+				$("#total_amount").html(total);
 			}
 		}
 	</script>
