@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bolsadeideas.springboot.app.models.dao.IClientDAO;
 import com.bolsadeideas.springboot.app.models.dao.IProductDAO;
+import com.bolsadeideas.springboot.app.models.dao.IReceiptDAO;
 import com.bolsadeideas.springboot.app.models.entity.Client;
 import com.bolsadeideas.springboot.app.models.entity.Product;
+import com.bolsadeideas.springboot.app.models.entity.Receipt;
 import com.bolsadeideas.springboot.app.models.service.IClientService;
 
 @Service
@@ -22,6 +24,9 @@ public class ClientService implements IClientService {
 
 	@Autowired
 	private IProductDAO productDAO;
+	
+	@Autowired
+	private IReceiptDAO receiptDAO;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -57,6 +62,12 @@ public class ClientService implements IClientService {
 	@Transactional
 	public List<Product> findByName(String term) {
 		return this.productDAO.findByNameLikeIgnoreCase(String.format("%%%s%%", term));
+	}
+
+	@Override
+	@Transactional
+	public void saveReceipt(Receipt receipt) {
+		this.receiptDAO.save(receipt);
 	}
 
 }
