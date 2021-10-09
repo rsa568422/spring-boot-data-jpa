@@ -73,6 +73,9 @@
 				$("#quantity_" + id).val(++quantity);
 
 				this.getAmount(id, price, quantity);
+			},
+			deleteReceiptLine : function(id) {
+				$("#row_" + id).remove();
 			}
 		}
 	</script>
