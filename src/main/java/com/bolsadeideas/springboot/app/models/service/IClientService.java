@@ -17,6 +17,8 @@ public interface IClientService {
 
 	public Client findById(Long id);
 
+	public Client fetchByIdWithReceipt(Long id);
+
 	public void save(Client client);
 
 	public void delete(Long id);
