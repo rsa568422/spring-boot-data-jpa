@@ -29,6 +29,8 @@ public interface IClientService {
 
 	public Receipt findReceiptById(Long id);
 
+	public Receipt fetchReceiptByIdWithClientWithReceiptLineWithProduct(Long id);
+
 	public void deleteReceipt(Long id);
 
 }
