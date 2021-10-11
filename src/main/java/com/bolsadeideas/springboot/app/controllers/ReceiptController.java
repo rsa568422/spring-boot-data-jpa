@@ -2,11 +2,14 @@ package com.bolsadeideas.springboot.app.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,9 +60,23 @@ public class ReceiptController {
 	}
 
 	@PostMapping("/form")
-	public String save(Receipt receipt, @RequestParam(name = "line_id[]", required = false) Long[] lineId,
+	public String save(@Valid Receipt receipt, BindingResult result, Model model,
+			@RequestParam(name = "line_id[]", required = false) Long[] lineId,
 			@RequestParam(name = "quantity[]", required = false) Integer[] quantity, RedirectAttributes flash,
 			SessionStatus status) {
+		if (result.hasErrors()) {
+			model.addAttribute("title", "Crear Factura");
+
+			return "receipt/form";
+		}
+
+		if (lineId == null || lineId.length == 0) {
+			model.addAttribute("title", "Crear Factura");
+			model.addAttribute("error", "Error: la factura debe contener alguna línea");
+
+			return "receipt/form";
+		}
+
 		for (int i = 0; i < lineId.length; i++) {
 			ReceiptLine line = new ReceiptLine();
 			line.setProduct(this.clientService.findProductById(lineId[i]));

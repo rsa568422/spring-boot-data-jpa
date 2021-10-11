@@ -31,7 +31,11 @@
 						<label for="description" class="col-sm-2 col-form-label"
 							th:text="'Descripción'"></label>
 						<div class="col-sm-6">
-							<input type="text" th:field="*{description}" class="form-control" />
+							<input type="text" th:field="*{description}" class="form-control"
+								th:errorclass="'form-control is-invalid'" />
+							<div class="invalid-feedback"
+								th:if="${#fields.hasErrors('description')}"
+								th:errors="*{description}"></div>
 						</div>
 					</div>
 
@@ -67,8 +71,10 @@
 						</thead>
 						<tbody></tbody>
 					</table>
-					
-					<h5>Total <span class="badge badge-secondary" id="total_amount">0</span></h5>
+
+					<h5>
+						Total <span class="badge badge-secondary" id="total_amount">0</span>
+					</h5>
 
 					<div class="form-group row">
 						<div class="col-sm-6">
