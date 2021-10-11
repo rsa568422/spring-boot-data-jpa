@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bolsadeideas.springboot.app.models.dao.IClientDAO;
+import com.bolsadeideas.springboot.app.models.dao.IProductDAO;
+import com.bolsadeideas.springboot.app.models.dao.IReceiptDAO;
 import com.bolsadeideas.springboot.app.models.entity.Client;
+import com.bolsadeideas.springboot.app.models.entity.Product;
+import com.bolsadeideas.springboot.app.models.entity.Receipt;
 import com.bolsadeideas.springboot.app.models.service.IClientService;
 
 @Service
@@ -17,6 +21,12 @@ public class ClientService implements IClientService {
 
 	@Autowired
 	private IClientDAO clientDAO;
+
+	@Autowired
+	private IProductDAO productDAO;
+
+	@Autowired
+	private IReceiptDAO receiptDAO;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -46,6 +56,36 @@ public class ClientService implements IClientService {
 	@Transactional
 	public void delete(Long id) {
 		this.clientDAO.deleteById(id);
+	}
+
+	@Override
+	@Transactional
+	public List<Product> findByName(String term) {
+		return this.productDAO.findByNameLikeIgnoreCase(String.format("%%%s%%", term));
+	}
+
+	@Override
+	@Transactional
+	public void saveReceipt(Receipt receipt) {
+		this.receiptDAO.save(receipt);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Product findProductById(Long id) {
+		return this.productDAO.findById(id).orElse(null);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Receipt findReceiptById(Long id) {
+		return this.receiptDAO.findById(id).orElse(null);
+	}
+
+	@Override
+	@Transactional
+	public void deleteReceipt(Long id) {
+		this.receiptDAO.deleteById(id);
 	}
 
 }

@@ -12,26 +12,25 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "clients")
+@Table(name = "receipts")
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Client implements Serializable {
+public class Receipt implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -40,37 +39,36 @@ public class Client implements Serializable {
 	private Long id;
 
 	@NotEmpty
-	private String name;
+	private String description;
 
-	@NotEmpty
-	private String surname;
+	private String observations;
 
-	@Email
-	@NotEmpty
-	private String email;
-
-	@NotNull
 	@Column(name = "create_at")
 	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createAt;
 
-	@OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Receipt> receipts;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Client client;
 
-	private String photo;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "receipt_id")
+	private List<ReceiptLine> lines;
 
-	public Client() {
-		this.receipts = new ArrayList<>();
+	public Receipt() {
+		this.lines = new ArrayList<>();
 	}
 
-	public void addReceipt(Receipt receipt) {
-		this.receipts.add(receipt);
+	@PrePersist
+	public void prePersist() {
+		this.createAt = new Date();
 	}
 
-	@Override
-	public String toString() {
-		return String.format("%s %s", this.name.trim(), this.surname.trim());
+	public void addLine(ReceiptLine line) {
+		this.lines.add(line);
+	}
+
+	public Double getTotal() {
+		return this.lines.stream().map(ReceiptLine::getAmount).reduce(Double::sum).orElse(null);
 	}
 
 }
