@@ -27,4 +27,6 @@ public interface IClientService {
 
 	public Product findProductById(Long id);
 
+	public Receipt findReceiptById(Long id);
+
 }

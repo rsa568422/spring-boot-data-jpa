@@ -36,6 +36,21 @@ public class ReceiptController {
 
 	private final Logger log = LoggerFactory.getLogger(ReceiptController.class);
 
+	@GetMapping("/see/{id}")
+	public String see(@PathVariable Long id, Model model, RedirectAttributes flash) {
+		Receipt receipt = this.clientService.findReceiptById(id);
+
+		if (receipt == null) {
+			flash.addFlashAttribute("error", "La factura no existe en al base de datos");
+			return "redirect:/list";
+		}
+
+		model.addAttribute("title", "Factura: ".concat(receipt.getDescription()));
+		model.addAttribute("receipt", receipt);
+
+		return "receipt/see";
+	}
+
 	@GetMapping("/form/{clientId}")
 	public String create(@PathVariable(value = "clientId") Long clientId, Model model, RedirectAttributes flash) {
 		Client client = this.clientService.findById(clientId);

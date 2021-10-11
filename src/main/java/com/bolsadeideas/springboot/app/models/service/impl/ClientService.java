@@ -76,4 +76,10 @@ public class ClientService implements IClientService {
 		return this.productDAO.findById(id).orElse(null);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public Receipt findReceiptById(Long id) {
+		return this.receiptDAO.findById(id).orElse(null);
+	}
+
 }
