@@ -41,6 +41,7 @@
 							<th>Descripci&oacuten</th>
 							<th>Fecha</th>
 							<th>Total</th>
+							<th>Ver</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -49,6 +50,8 @@
 							<td th:text="${receipt.description}"></td>
 							<td th:text="${receipt.createAt}"></td>
 							<td th:text="${receipt.total}"></td>
+							<td><a class="btn btn-primary btn-xs"
+								th:href="@{'/receipt/see/' + ${receipt.id}}" th:text="detalle"></a></td>
 						</tr>
 					</tbody>
 				</table>

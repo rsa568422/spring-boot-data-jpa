@@ -68,4 +68,9 @@ public class Client implements Serializable {
 		this.receipts.add(receipt);
 	}
 
+	@Override
+	public String toString() {
+		return String.format("%s %s", this.name.trim(), this.surname.trim());
+	}
+
 }
