@@ -48,6 +48,12 @@
 					return false;
 				}
 			});
+
+			$("form").submit(function() {
+				$("#templateReceiptLines").remove();
+				return;
+			});
+
 		});
 
 		var itemsHelper = {

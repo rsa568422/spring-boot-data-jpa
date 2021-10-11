@@ -2,19 +2,25 @@ package com.bolsadeideas.springboot.app.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bolsadeideas.springboot.app.models.entity.Client;
 import com.bolsadeideas.springboot.app.models.entity.Product;
 import com.bolsadeideas.springboot.app.models.entity.Receipt;
+import com.bolsadeideas.springboot.app.models.entity.ReceiptLine;
 import com.bolsadeideas.springboot.app.models.service.IClientService;
 
 @Controller
@@ -24,6 +30,8 @@ public class ReceiptController {
 
 	@Autowired
 	private IClientService clientService;
+
+	private final Logger log = LoggerFactory.getLogger(ReceiptController.class);
 
 	@GetMapping("/form/{clientId}")
 	public String create(@PathVariable(value = "clientId") Long clientId, Model model, RedirectAttributes flash) {
@@ -46,6 +54,28 @@ public class ReceiptController {
 	@GetMapping(value = "/load-products/{term}", produces = { "application/json" })
 	public @ResponseBody List<Product> loadProducts(@PathVariable String term) {
 		return this.clientService.findByName(term);
+	}
+
+	@PostMapping("/form")
+	public String save(Receipt receipt, @RequestParam(name = "line_id[]", required = false) Long[] lineId,
+			@RequestParam(name = "quantity[]", required = false) Integer[] quantity, RedirectAttributes flash,
+			SessionStatus status) {
+		for (int i = 0; i < lineId.length; i++) {
+			ReceiptLine line = new ReceiptLine();
+			line.setProduct(this.clientService.findProductById(lineId[i]));
+			line.setQuantity(quantity[i]);
+
+			this.log.info(String.format("ID: %s, cantidad: %s", lineId[i], quantity[i]));
+
+			receipt.addLine(line);
+		}
+
+		this.clientService.saveReceipt(receipt);
+
+		status.setComplete();
+		flash.addFlashAttribute("success", "Factura creada con éxito");
+
+		return "redirect:/see/".concat(receipt.getClient().getId().toString());
 	}
 
 }

@@ -45,7 +45,7 @@ public class Receipt implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Client client;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
