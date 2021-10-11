@@ -5,77 +5,81 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-import lombok.Getter;
-
 public class PageRender<T> {
 
-	@Getter
 	private String url;
-
-	@Getter
-	private int totalPages;
-
-	@Getter
-	private int actualPage;
-
-	@Getter
-	private List<PageItem> pages;
-
 	private Page<T> page;
 
-	private int size;
+	private int totalPaginas;
 
-	public static <T> PageRender<T> of(String url, Page<T> page) {
-		PageRender<T> pageRender = new PageRender<>();
+	private int numElementosPorPagina;
 
-		pageRender.initPageRender(url, page);
+	private int paginaActual;
 
-		return pageRender;
+	private List<PageItem> paginas;
+
+	public PageRender(String url, Page<T> page) {
+		this.url = url;
+		this.page = page;
+		this.paginas = new ArrayList<PageItem>();
+
+		numElementosPorPagina = 6;
+		totalPaginas = page.getTotalPages();
+		paginaActual = page.getNumber() + 1;
+
+		int desde, hasta;
+		if (totalPaginas <= numElementosPorPagina) {
+			desde = 1;
+			hasta = totalPaginas;
+		} else {
+			if (paginaActual <= numElementosPorPagina / 2) {
+				desde = 1;
+				hasta = numElementosPorPagina;
+			} else if (paginaActual >= totalPaginas - numElementosPorPagina / 2) {
+				desde = totalPaginas - numElementosPorPagina + 1;
+				hasta = numElementosPorPagina;
+			} else {
+				desde = paginaActual - numElementosPorPagina / 2;
+				hasta = numElementosPorPagina;
+			}
+		}
+
+		for (int i = 0; i < hasta; i++) {
+			paginas.add(new PageItem(desde + i, paginaActual == desde + i));
+		}
+
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public int getTotalPaginas() {
+		return totalPaginas;
+	}
+
+	public int getPaginaActual() {
+		return paginaActual;
+	}
+
+	public List<PageItem> getPaginas() {
+		return paginas;
 	}
 
 	public boolean isFirst() {
-		return this.page.isFirst();
+		return page.isFirst();
 	}
 
 	public boolean isLast() {
-		return this.page.isLast();
+		return page.isLast();
 	}
 
-	public boolean hasNext() {
-		return this.page.hasNext();
+	public boolean isHasNext() {
+		return page.hasNext();
 	}
 
-	public boolean hasPrevious() {
-		return this.page.hasPrevious();
-	}
-
-	private void initPageRender(String url, Page<T> page) {
-		this.url = url;
-		this.page = page;
-		this.pages = new ArrayList<>();
-		
-		this.size = page.getSize();
-		this.totalPages = page.getTotalPages();
-		this.actualPage = page.getNumber() + 1;
-
-		int start, end;
-		if (this.totalPages <= this.size) {
-			start = 1;
-			end = this.totalPages;
-		} else {
-			if (this.actualPage <= this.size / 2) {
-				start = 1;
-			} else if (this.actualPage >= this.totalPages - this.size / 2) {
-				start = this.totalPages - this.size + 1;
-			} else {
-				start = this.actualPage - this.size / 2;
-			}
-			end = this.size;
-		}
-
-		for (int i = 0; i < end; i++) {
-			this.pages.add(new PageItem(start + i, this.actualPage == start + i));
-		}
+	public boolean isHasPrevious() {
+		return page.hasPrevious();
 	}
 
 }
