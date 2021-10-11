@@ -42,6 +42,7 @@
 							<th>Fecha</th>
 							<th>Total</th>
 							<th>Ver</th>
+							<th>Eliminar</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -52,6 +53,10 @@
 							<td th:text="${receipt.total}"></td>
 							<td><a class="btn btn-primary btn-xs"
 								th:href="@{'/receipt/see/' + ${receipt.id}}" th:text="detalle"></a></td>
+							<td><a class="btn btn-danger btn-xs"
+								th:href="@{'/receipt/delete/' + ${receipt.id}}"
+								th:text="eliminar"
+								onclick="return confirm('¿Estas seguro de que deseas eliminar la factura?');"></a></td>
 						</tr>
 					</tbody>
 				</table>

@@ -110,4 +110,20 @@ public class ReceiptController {
 		return "redirect:/see/".concat(receipt.getClient().getId().toString());
 	}
 
+	@GetMapping("/delete/{id}")
+	public String delete(@PathVariable Long id, RedirectAttributes flash) {
+		Receipt receipt = this.clientService.findReceiptById(id);
+
+		if (receipt != null) {
+			this.clientService.deleteReceipt(id);
+			flash.addFlashAttribute("success", "Factura eliminada con éxito");
+
+			return "redirect:/see/".concat(receipt.getClient().getId().toString());
+		}
+
+		flash.addFlashAttribute("error", "La factura no existe en al base de datos, no se pudo eliminar");
+
+		return "redirect:/list";
+	}
+
 }

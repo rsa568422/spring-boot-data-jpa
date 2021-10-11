@@ -82,4 +82,10 @@ public class ClientService implements IClientService {
 		return this.receiptDAO.findById(id).orElse(null);
 	}
 
+	@Override
+	@Transactional
+	public void deleteReceipt(Long id) {
+		this.receiptDAO.deleteById(id);
+	}
+
 }
