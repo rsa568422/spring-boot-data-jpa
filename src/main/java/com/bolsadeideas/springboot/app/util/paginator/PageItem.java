@@ -1,14 +1,21 @@
 package com.bolsadeideas.springboot.app.util.paginator;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public class PageItem {
 
-	private int number;
-
+	private int numero;
 	private boolean actual;
+
+	public PageItem(int numero, boolean actual) {
+		this.numero = numero;
+		this.actual = actual;
+	}
+
+	public int getNumero() {
+		return numero;
+	}
+
+	public boolean isActual() {
+		return actual;
+	}
 
 }
