@@ -38,7 +38,7 @@ public class ReceiptController {
 
 	@GetMapping("/see/{id}")
 	public String see(@PathVariable Long id, Model model, RedirectAttributes flash) {
-		Receipt receipt = this.clientService.findReceiptById(id);
+		Receipt receipt = this.clientService.fetchReceiptByIdWithClientWithReceiptLineWithProduct(id);
 
 		if (receipt == null) {
 			flash.addFlashAttribute("error", "La factura no existe en al base de datos");
