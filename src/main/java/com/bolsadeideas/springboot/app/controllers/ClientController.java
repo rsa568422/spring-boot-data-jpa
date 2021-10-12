@@ -58,10 +58,10 @@ public class ClientController {
 	@GetMapping("/see/{id}")
 	public String see(@PathVariable(value = "id") Long id, Model model, RedirectAttributes flash) {
 
-		Client client = this.clientService.findById(id);
+		Client client = this.clientService.fetchByIdWithReceipt(id);
 
 		if (client == null) {
-			flash.addAttribute("error", "Cliente no encontrado");
+			flash.addFlashAttribute("error", "Cliente no encontrado");
 			return "redirect:/list";
 		}
 

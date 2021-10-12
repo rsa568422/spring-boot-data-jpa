@@ -47,6 +47,12 @@ public class ClientService implements IClientService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public Client fetchByIdWithReceipt(Long id) {
+		return this.clientDAO.fetchByIdWithReceipts(id);
+	}
+
+	@Override
 	@Transactional
 	public void save(Client client) {
 		this.clientDAO.save(client);
@@ -80,6 +86,12 @@ public class ClientService implements IClientService {
 	@Transactional(readOnly = true)
 	public Receipt findReceiptById(Long id) {
 		return this.receiptDAO.findById(id).orElse(null);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Receipt fetchReceiptByIdWithClientWithReceiptLineWithProduct(Long id) {
+		return this.receiptDAO.fetchByIdWithClientWithReceiptLineWithProduct(id);
 	}
 
 	@Override
